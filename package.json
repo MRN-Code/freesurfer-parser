@@ -1,25 +1,28 @@
 {
-  "name": "nodeapi",
+  "name": "freesurfer-parser",
   "version": "0.0.0",
-  "description": "Node project boilerplate for COINS",
+  "description": "Parse and validate freesurfer volume text files",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "byline": "4.2.1",
+    "joi": "6.6.1"
+  },
   "devDependencies": {
-    "coins-grunt-env": "^1.0.0",
-    "config": "^1.11.0",
-    "precommit-hook": "^3.0.0",
-    "grunt": "^0.4.5",
-    "grunt-contrib-jshint": "^0.11.0",
-    "grunt-env": "^0.4.4",
-    "grunt-jscs": "^1.5.0",
-    "grunt-mocha-cli": "^1.12.0",
-    "load-grunt-config": "^0.16.0",
-    "load-grunt-tasks": "^3.1.0",
-    "should": "^5.0.0",
-    "time-grunt": "^1.0.0"
+    "chai": "3.2.0",
+    "coins-grunt-env": "1.0.1",
+    "config": "1.16.0",
+    "grunt": "0.4.5",
+    "grunt-contrib-jshint": "0.11.3",
+    "grunt-env": "0.4.4",
+    "grunt-jscs": "2.1.0",
+    "grunt-mocha-cli": "1.14.0",
+    "load-grunt-config": "0.17.2",
+    "load-grunt-tasks": "3.2.0",
+    "precommit-hook": "3.0.0",
+    "time-grunt": "1.2.1"
   },
   "scripts": {
     "lint": "echo 'run linter!'",
@@ -28,17 +31,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MRN-Code/node_boilerplate.git"
+    "url": "https://github.com/MRN-Code/freesurfer-parser.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MRN-Code/node_boilerplate/issues"
+    "url": "https://github.com/MRN-Code/freesurfer-parser/issues"
   },
   "pre-commit": [
     "lint",
     "validate",
     "test"
   ],
-  "homepage": "https://github.com/MRN-Code/node_boilerplate"
+  "homepage": "https://github.com/MRN-Code/freesurfer-parser"
 }
