@@ -14,7 +14,7 @@ var merge = require('lodash.merge');
 var schema = require('./lib/schema.js');
 var eol = '\n';
 var defaultHeaderCount = 1;
-var delimiter = `\t`;
+var delimiter = '\t';
 
 var FreeSurfer = function(_options) {
     var options = defaults(_options, defaultOptions);
