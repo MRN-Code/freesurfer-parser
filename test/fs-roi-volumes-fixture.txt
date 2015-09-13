@@ -65,3 +65,4 @@ lhSurfaceHoles	85
 rhSurfaceHoles	68
 SurfaceHoles	153
 EstimatedTotalIntraCranialVol	1.39843e+06
+stripMe	junk

@@ -1,153 +1,143 @@
 'use strict';
 
+//TODO: add option to create from readStream
 var joi = require('joi');
-var os = require('os');
-var byline = require('byline');
-
-var internals = {};
-var parser = {};
-
-internals.validFields = [
-    'Left-Lateral-Ventricle',
-    'Left-Inf-Lat-Vent',
-    'Left-Cerebellum-White-Matter',
-    'Left-Cerebellum-Cortex',
-    'Left-Thalamus-Proper',
-    'Left-Caudate',
-    'Left-Putamen',
-    'Left-Pallidum',
-    '3rd-Ventricle',
-    '4th-Ventricle',
-    'Brain-Stem',
-    'Left-Hippocampus',
-    'Left-Amygdala',
-    'CSF',
-    'Left-Accumbens-area',
-    'Left-VentralDC',
-    'Left-vessel',
-    'Left-choroid-plexus',
-    'Right-Lateral-Ventricle',
-    'Right-Inf-Lat-Vent',
-    'Right-Cerebellum-White-Matter',
-    'Right-Cerebellum-Cortex',
-    'Right-Thalamus-Proper',
-    'Right-Caudate',
-    'Right-Putamen',
-    'Right-Pallidum',
-    'Right-Hippocampus',
-    'Right-Amygdala',
-    'Right-Accumbens-area',
-    'Right-VentralDC',
-    'Right-vessel',
-    'Right-choroid-plexus',
-    '5th-Ventricle',
-    'WM-hypointensities',
-    'Left-WM-hypointensities',
-    'Right-WM-hypointensities',
-    'non-WM-hypointensities',
-    'Left-non-WM-hypointensities',
-    'Right-non-WM-hypointensities',
-    'Optic-Chiasm',
-    'CC_Posterior',
-    'CC_Mid_Posterior',
-    'CC_Central',
-    'CC_Mid_Anterior',
-    'CC_Anterior',
-    'BrainSegVol',
-    'BrainSegVolNotVent',
-    'BrainSegVolNotVentSurf',
-    'lhCortexVol',
-    'rhCortexVol',
-    'CortexVol',
-    'lhCorticalWhiteMatterVol',
-    'rhCorticalWhiteMatterVol',
-    'CorticalWhiteMatterVol',
-    'SubCortGrayVol',
-    'TotalGrayVol',
-    'SupraTentorialVol',
-    'SupraTentorialVolNotVent',
-    'SupraTentorialVolNotVentVox',
-    'MaskVol',
-    'BrainSegVol-to-eTIV',
-    'MaskVol-to-eTIV',
-    'lhSurfaceHoles',
-    'rhSurfaceHoles',
-    'SurfaceHoles',
-    'EstimatedTotalIntraCranialVol'
-];
-
-/**
- * generate a joi schema
- * @return {object} joi validation schema
- */
-internals.getSchemaKeys = function() {
-    return internals.validFields.reduce(function(res, val) {
-        res[val] = joi.number().required();
-        return res;
-    }, {});
+var defaultOptions = {
+    values: null,
+    string: null,
+    headerCount: 1,
+    removeInvalidFields: true,
+    validate: true,
 };
+var defaults = require('lodash.defaults');
+var merge = require('lodash.merge');
+var schema = require('./lib/schema.js');
+var eol = '\n';
+var defaultHeaderCount = 1;
+var delimiter = `\t`;
 
-internals.schema = joi.object().keys(internals.getSchemaKeys);
+var FreeSurfer = function(_options) {
+    var options = defaults(_options, defaultOptions);
 
-/**
- * parse a single line
- * @param  {string} line the line to be parsed
- * @return {array}      zero-th index is the field name, first-index is the val
- */
-internals.parseLine = function(line) {
-    return line.split('\t');
-};
+    if (options.values) {
+        merge(this, options.values);
+    }
 
-parser.parse = function(string) {
-    var lines = string.split(os.EOL);
-    return lines.reduce(function(res, line) {
-        var lineArgs = line.split('\t');
-        res[lineArgs[0]] = lineArgs[1];
-        return res;
-    }, {});
+    if (options.string) {
+        this.setFromString(options.string, options.headerCount);
+    }
+
+    if (options.removeInvalidFields) {
+        this.trimInvalidFields();
+    }
+
+    if (options.validate) {
+        this.validate();
+    }
 };
 
 /**
- * parse a readStream
- * @param  {readStream}   stream   the readstream to be parsed
- * @param  {Function} callback    called when the stream is fully parsed
- *                                signature (err, parsedObj)
- * @return {readStream}           The line-by-line readStream
+ * Sets the End Of Line character for all FreeSurfer instances
+ * @param  {string} val the eol character
+ * @return {string}     the previous value of the eol character
  */
-parser.parseStream = function(stream, callback) {
-    var thisStream = byline.createStream(stream);
-    thisStream.result = {};
-    thisStream.on('data', function(line) {
-        var parts = internals.parseLine(line);
-        thisStream.result[parts[0]] = parts[1];
-    });
-
-    thisStream.on('end', callback(null, thisStream.result));
-    return thisStream;
+FreeSurfer.setEol = function(val) {
+    var oldVal = eol;
+    eol = val;
+    return oldVal;
 };
 
 /**
- * validate that an object only has the required keys
- * @param  {object} obj the object to be validated
- * @return {object}     contains an `error` and a `value` property
+ * Sets the delimiter character for all FreeSurfer instances
+ * @param  {string} val the delimiter character
+ * @return {string}     the previous value of the delimiter
  */
-parser.validate = function(obj) {
-    return joi.validate(obj, internals.schema);
+FreeSurfer.setDelimiter = function(val) {
+    var oldVal = delimiter;
+    delimiter = val;
+    return oldVal;
 };
 
 /**
- * trim invalid fields from an object
- * @param  {object} obj the object to be trimmed
- * @return {object}     the trimmed object
+ * Sets the default number of header lines for all FreeSurfer instances
+ * @param  {int} val the number of header lines
+ * @return {int}     the previous value
  */
-parser.trimInvalidFields = function(obj) {
-    return internals.validFields.reduce(function(res, val) {
-        if (obj[val] !== undefined) {
-            res[val] = obj[val];
+FreeSurfer.setDefaultHeaderCount = function(val) {
+    var oldVal = defaultHeaderCount;
+    defaultHeaderCount = val;
+    return oldVal;
+};
+
+FreeSurfer.prototype = {
+    schema: schema.schema,
+    /**
+     * validate that an object only has the required keys
+     * @return {FreeSurfer}     throws an error, or returns self
+     */
+    validate: function() {
+        joi.assert(this, this.schema);
+        return this;
+    },
+
+    /**
+     * trim invalid fields from the current object
+     * @return {FreeSurfer}     self
+     */
+    trimInvalidFields: function() {
+        var self = this;
+        for (var key in self) {
+            if (self.hasOwnProperty(key)) {
+                if (schema.validFields.indexOf(key) === -1) {
+                    delete self[key];
+                }
+            }
         }
 
-        return res;
-    }, {});
+        return this;
+    },
+
+    /**
+     * set values from string
+     * @param  {string} string      the string
+     * @param  {[type]} headerCount [description]
+     * @return {[type]}             [description]
+     */
+    setFromString: function(string, headerCount) {
+        if (headerCount === undefined) {
+            headerCount = defaultHeaderCount;
+        }
+
+        var lines = string.split(eol);
+        var res = {};
+        var self = this;
+
+        if (headerCount) {
+            res.header = lines.splice(0, headerCount).join(';');
+        }
+
+        res = lines.reduce(function(res, line) {
+            var lineArgs = self.parseLine(line);
+            if (lineArgs[0] !== '') {
+                res[lineArgs[0]] = lineArgs[1];
+            }
+
+            return res;
+        }, res);
+
+        // Merge results with existing values
+        merge(this, res);
+        return this;
+    },
+
+    /**
+     * parse a single line
+     * @param  {string} line the line to be parsed
+     * @return {array}      zero-th index is the key, first-index is the val
+     */
+    parseLine: function(line) {
+        return line.split(delimiter);
+    }
 };
 
-module.exports = parser;
+module.exports = FreeSurfer;
