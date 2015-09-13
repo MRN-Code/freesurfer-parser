@@ -1,4 +1,7 @@
 # freesurfer-parser
+
+[ ![Codeship Status for MRN-Code/freesurfer-parser](https://codeship.com/projects/3d985d20-3c93-0133-6289-3ebbb4d77cd4/status?branch=master)](https://codeship.com/projects/102291)
+
 Parse a freesurfer volume file/string. By default, this will parse a string, setting the first line as the `header`. Any unexpected properties will be removed by default as well.
 
 #Usage
