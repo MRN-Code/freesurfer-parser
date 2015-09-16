@@ -35,7 +35,7 @@ _defaults to `\n`_
 
 ### `FreeSufer.setDelimiter(value)`
 - @param {string} value to be used as the delimiting character between _ROI_ and _measured volume_.
-_defaults to `\t`_
+_defaults to `/\s+/` (whitespace)_
 - @returns {string} the previous value
 
 ### `FreeSufer.setDefaultHeaderCount(value)`

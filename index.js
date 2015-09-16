@@ -14,7 +14,7 @@ var merge = require('lodash.merge');
 var schema = require('./lib/schema.js');
 var eol = '\n';
 var defaultHeaderCount = 1;
-var delimiter = '\t';
+var delimiter = /\s+/;
 
 var FreeSurfer = function(_options) {
     var options = defaults(_options, defaultOptions);
@@ -116,13 +116,29 @@ FreeSurfer.prototype = {
             res.header = lines.splice(0, headerCount).join(';');
         }
 
-        res = lines.reduce(function(res, line) {
+        res = lines.reduce(function(res, line, ndx) {
             var lineArgs = self.parseLine(line);
-            if (lineArgs[0] !== '') {
-                res[lineArgs[0]] = lineArgs[1];
+            var roiParameter = lineArgs[0];
+            var roiValue = parseFloat(lineArgs[1]);
+
+            if (!roiParameter && !roiValue) {
+                return res; // empty line
             }
 
-            return res;
+            if (lineArgs.length !== 2) {
+                throw new ReferenceError([
+                    'invalid file: parameter "', roiParameter, '". ',
+                    'see line ', ndx
+                ].join(''));
+            } else if (roiParameter && !isNaN(roiValue)) {
+                res[roiParameter] = roiValue;
+                return res;
+            }
+
+            throw new ReferenceError([
+                'invalid file: see line ', ndx
+            ].join(''));
+
         }, res);
 
         // Merge results with existing values

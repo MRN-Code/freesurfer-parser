@@ -6,6 +6,8 @@ var fs = require('fs');
 var path = require('path');
 
 var fixturePath = path.join(__dirname, 'fs-roi-volumes-fixture.txt');
+var fixturePath2 = path.join(__dirname, 'fs-roi-volumes-fixture-2.txt');
+var fixturePath3 = path.join(__dirname, 'fs-roi-volumes-fixture-3.txt');
 
 chai.should();
 
@@ -30,15 +32,26 @@ describe('Constructor', function() {
 });
 
 describe('Parsing', function() {
-    var txt;
+    var txt, txt2, txt3;
     before('read fixture into memory', function(next) {
         txt = fs.readFileSync(fixturePath).toString();
+        txt2 = fs.readFileSync(fixturePath2).toString();
+        txt3 = fs.readFileSync(fixturePath3).toString();
         next();
     });
 
-    it('parses a valid string with header', function() {
+    it('parses a valid string with header (tab delimited)', function() {
         var freeSurfer = new FreeSurfer({
             string: txt,
+            headerCount: 1
+        });
+        freeSurfer.should.be.instanceOf(FreeSurfer);
+        freeSurfer.should.have.property('header');
+    });
+
+    it('parses a valid string with header (space delimited)', function() {
+        var freeSurfer = new FreeSurfer({
+            string: txt2,
             headerCount: 1
         });
         freeSurfer.should.be.instanceOf(FreeSurfer);
@@ -54,10 +67,20 @@ describe('Parsing', function() {
         freeSurfer.should.not.have.property('header');
     });
 
-    it('rejects an invalid string', function() {
+    it('rejects an invalid string (simple)', function() {
         var tryFreeSurfer = function() {
             return new FreeSurfer({
                 string: 'invalid string'
+            });
+        };
+
+        chai.expect(tryFreeSurfer).to.throw(Error);
+    });
+
+    it('rejects an invalid string (complex, ~FreeSurfer format)', function() {
+        var tryFreeSurfer = function() {
+            return new FreeSurfer({
+                string: txt3
             });
         };
 
