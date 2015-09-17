@@ -5,9 +5,9 @@ var FreeSurfer = require('../index.js');
 var fs = require('fs');
 var path = require('path');
 
-var fixturePath = path.join(__dirname, 'fs-roi-volumes-fixture.txt');
-var fixturePath2 = path.join(__dirname, 'fs-roi-volumes-fixture-2.txt');
-var fixturePath3 = path.join(__dirname, 'fs-roi-volumes-fixture-3.txt');
+var surfUnusedRoi = path.join(__dirname, 'fs-roi-volumes-fixture-unused-roi.txt');
+var surfSpaceDelim = path.join(__dirname, 'fs-roi-volumes-fixture-space-delim.txt');
+var surfInvalid = path.join(__dirname, 'fs-roi-volumes-fixture-invalid.txt');
 
 chai.should();
 
@@ -32,17 +32,19 @@ describe('Constructor', function() {
 });
 
 describe('Parsing', function() {
-    var txt, txt2, txt3;
+    var txtUnusedRoi;
+    var txtSpaceDelim;
+    var txtInvalid;
     before('read fixture into memory', function(next) {
-        txt = fs.readFileSync(fixturePath).toString();
-        txt2 = fs.readFileSync(fixturePath2).toString();
-        txt3 = fs.readFileSync(fixturePath3).toString();
+        txtUnusedRoi = fs.readFileSync(surfUnusedRoi).toString();
+        txtSpaceDelim = fs.readFileSync(surfSpaceDelim).toString();
+        txtInvalid = fs.readFileSync(surfInvalid).toString();
         next();
     });
 
     it('parses a valid string with header (tab delimited)', function() {
         var freeSurfer = new FreeSurfer({
-            string: txt,
+            string: txtUnusedRoi,
             headerCount: 1
         });
         freeSurfer.should.be.instanceOf(FreeSurfer);
@@ -51,7 +53,7 @@ describe('Parsing', function() {
 
     it('parses a valid string with header (space delimited)', function() {
         var freeSurfer = new FreeSurfer({
-            string: txt2,
+            string: txtSpaceDelim,
             headerCount: 1
         });
         freeSurfer.should.be.instanceOf(FreeSurfer);
@@ -60,7 +62,7 @@ describe('Parsing', function() {
 
     it('parses a valid string without header', function() {
         var freeSurfer = new FreeSurfer({
-            string: txt.replace(/^[^\n]*\n/, ''),
+            string: txtUnusedRoi.replace(/^[^\n]*\n/, ''),
             headerCount: 0
         });
         freeSurfer.should.be.instanceOf(FreeSurfer);
@@ -80,7 +82,7 @@ describe('Parsing', function() {
     it('rejects an invalid string (complex, ~FreeSurfer format)', function() {
         var tryFreeSurfer = function() {
             return new FreeSurfer({
-                string: txt3
+                string: txtInvalid
             });
         };
 
@@ -100,7 +102,7 @@ describe('Parsing', function() {
 
     it('strips invalid fields by default', function() {
         var freeSurfer = new FreeSurfer({
-            string: txt,
+            string: txtUnusedRoi,
             validate: false
         });
 
@@ -109,7 +111,7 @@ describe('Parsing', function() {
 
     it('strips invalid fields by default', function() {
         var freeSurfer = new FreeSurfer({
-            string: txt,
+            string: txtUnusedRoi,
             validate: false,
             removeInvalidFields: false
         });
