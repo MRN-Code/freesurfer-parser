@@ -2,33 +2,31 @@
   "name": "freesurfer-parser",
   "version": "0.0.0",
   "description": "Parse and validate freesurfer volume text files",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
+  "main": "src/index.js",
   "dependencies": {
-    "joi": "6.6.1",
-    "lodash.defaults": "3.1.2",
-    "lodash.merge": "3.3.2"
+    "joi": "8.4.2",
+    "lodash": "4.13.1"
   },
   "devDependencies": {
     "chai": "3.2.0",
-    "coins-grunt-env": "1.0.1",
-    "config": "1.16.0",
-    "grunt": "0.4.5",
-    "grunt-contrib-jshint": "0.11.3",
-    "grunt-env": "0.4.4",
-    "grunt-jscs": "2.1.0",
-    "grunt-mocha-cli": "1.14.0",
-    "load-grunt-config": "0.17.2",
-    "load-grunt-tasks": "3.2.0",
-    "precommit-hook": "3.0.0",
-    "time-grunt": "1.2.1"
+    "coins-validate": "5.0.0",
+    "eslint": "2.12.0",
+    "eslint-config-airbnb": "9.0.1",
+    "eslint-plugin-import": "1.8.1",
+    "eslint-plugin-jsx-a11y": "1.5.1",
+    "eslint-plugin-react": "5.1.1",
+    "nyc": "6.6.1",
+    "tape": "4.5.1"
   },
   "scripts": {
-    "lint": "echo 'run linter!'",
-    "validate": "echo 'run validator!'",
-    "test": "grunt test"
+    "test": "nyc --reporter=lcov --check-coverage --functions=90 --branches=90 node test/",
+    "lint": "eslint src/ test/",
+    "lintfix": "eslint --fix src/ test/",
+    "validate": "npm ls",
+    "preversion": "git checkout master && git pull && npm ls",
+    "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
+    "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
+    "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish"
   },
   "repository": {
     "type": "git",

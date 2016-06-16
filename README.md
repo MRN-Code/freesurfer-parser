@@ -67,3 +67,7 @@ Assert that the current object has only the requisite properties. Throws an erro
 
 ## Contributing
 Please submit any changes to this repo (including additions and subtractions from the lint config files) as pull requests.
+
+## TODO
+
+- TODO: add option to create from readStream
