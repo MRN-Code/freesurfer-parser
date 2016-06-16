@@ -17,10 +17,14 @@ const substancSurfs = substanceURSIs.map((ursi) => ({
 
 mkdirp.sync('./demo/controls');
 controlSurfs.forEach((surf) => {
-  fs.writeFileSync(`./demo/controls/${surf.ursi}`, surf.output);
+  const dest = `./demo/controls/${surf.ursi}.txt`;
+  console.log(`writing control ursi ${surf.ursi} ${dest}`);
+  fs.writeFileSync(dest, surf.output);
 });
 
 mkdirp.sync('./demo/substanceUsers');
 substancSurfs.forEach((surf) => {
-  fs.writeFileSync(`./demo/substanceUsers/${surf.ursi}`, surf.output);
+  const dest = `./demo/substanceUsers/${surf.ursi}.txt`;
+  console.log(`writing control ursi ${surf.ursi} ${dest}`);
+  fs.writeFileSync(dest, surf.output);
 });

@@ -4,7 +4,7 @@
 
 Parse a freesurfer volume file/string. By default, this will parse a string, setting the first line as the `header`. Any unexpected properties will be removed by default as well.
 
-#Usage
+# Usage
 ```js
 fileContent = fs.readFileSync('/path/to/file.txt').toString();
 FreeSurfer = require('freesurfer-parser');
@@ -64,6 +64,10 @@ Remove any properties whose keys are not in the validFields of the schema (see _
 - @return {object} self
 
 Assert that the current object has only the requisite properties. Throws an error if assertion fails.
+
+## rando
+
+- a dummy FreeSurfer generator exists in `scripts/generator.js`.  use it if you so desire.
 
 ## Contributing
 Please submit any changes to this repo (including additions and subtractions from the lint config files) as pull requests.
