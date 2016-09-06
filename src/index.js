@@ -122,6 +122,15 @@ class FreeSurfer {
 
 }
 FreeSurfer.prototype.schema = schema.schema;
+
+/**
+ * Valid fields.
+ * @static
+ *
+ * @const {string[]}
+ */
+FreeSurfer.validFields = schema.validFields;
+
 /**
  * Sets the End Of Line character for all FreeSurfer instances
  * @param  {string} val the eol character
