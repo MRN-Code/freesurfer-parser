@@ -19,8 +19,7 @@
   },
   "scripts": {
     "test": "nyc --reporter=lcov --check-coverage --functions=90 --branches=90 node test/",
-    "lint": "eslint src/ test/",
-    "lintfix": "eslint --fix src/ test/",
+    "lint": "eslint src test",
     "validate": "npm ls",
     "preversion": "git checkout master && git pull && npm ls",
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
