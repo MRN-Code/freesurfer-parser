@@ -73,7 +73,7 @@ const validFields = [
 ];
 
 const keys = validFields.reduce((res, val) => {
-  res[val] = joi.number().required();
+  res[val] = joi.number().required(); // eslint-disable-line no-param-reassign
   return res;
 }, {});
 

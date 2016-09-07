@@ -1,6 +1,7 @@
 'use strict';
 
 const joi = require('joi');
+
 const defaultOptions = {
   defaultHeaderCount: 1,
   delimiter: /\s+/,
@@ -13,7 +14,7 @@ const defaultOptions = {
 };
 const defaults = require('lodash/defaults');
 const merge = require('lodash/merge');
-const schema = require('./schema.js');
+const schema = require('./schema');
 
 class FreeSurfer {
 
@@ -51,12 +52,12 @@ class FreeSurfer {
   }
 
   /**
-   * trim invalid fields from the current object
+   * trim invalid fields from the current objects
    * @return {FreeSurfer} this
    */
   trimInvalidFields() {
     for (let key in this) { // eslint-disable-line
-      if (this.hasOwnProperty(key)) {
+      if (this.hasOwnProperty(key)) { // eslint-disable-line no-prototype-builtins
         if (schema.validFields.indexOf(key) === -1) {
           delete this[key];
         }
@@ -72,25 +73,25 @@ class FreeSurfer {
    * @return {FreeSurfer} this
    */
   setFromString(string, headerCount) {
-    /* istanbul ignore if */
-    if (headerCount === undefined) {
-      headerCount = this.defaultHeaderCount;
-    }
+    /* istanbul ignore next */
+    const localHeaderCount = typeof headerCount !== 'undefined' ?
+      headerCount :
+      this.defaultHeaderCount;
 
     const lines = string.split(this.eol);
     let res = {};
 
-    if (headerCount) {
-      res.header = lines.splice(0, headerCount).join(';');
+    if (localHeaderCount) {
+      res.header = lines.splice(0, localHeaderCount).join(';');
     }
 
-    res = lines.reduce((res, line, ndx) => {
+    res = lines.reduce((memo, line, ndx) => {
       const lineArgs = this.parseLine(line);
       const roiParameter = lineArgs[0];
       const roiValue = parseFloat(lineArgs[1]);
 
       if (!roiParameter && !roiValue) {
-        return res; // empty line
+        return memo; // empty line
       }
 
       if (lineArgs.length !== 2) {
@@ -99,8 +100,8 @@ class FreeSurfer {
           'see line ', ndx,
         ].join(''));
       } else if (roiParameter && !isNaN(roiValue)) {
-        res[roiParameter] = roiValue;
-        return res;
+        memo[roiParameter] = roiValue; // eslint-disable-line no-param-reassign
+        return memo;
       }
       /* istanbul ignore next */
       throw new ReferenceError(`invalid file: see line ${ndx}`);

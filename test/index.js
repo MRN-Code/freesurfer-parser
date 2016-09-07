@@ -10,25 +10,25 @@ const surfSpaceDelim = path.join(__dirname, 'fs-roi-volumes-fixture-space-delim.
 const surfInvalid = path.join(__dirname, 'fs-roi-volumes-fixture-invalid.txt');
 
 test('Constructor', (t) => {
-  t.test('should set a new EOL', (t) => {
+  t.test('should set a new EOL', (st) => {
     const origEol = FreeSurfer.setEol('foo');
     const newEol = FreeSurfer.setEol(origEol);
-    t.equals(newEol, 'foo');
-    t.end();
+    st.equals(newEol, 'foo');
+    st.end();
   });
 
-  t.test('should set a new delimiter', (t) => {
+  t.test('should set a new delimiter', (st) => {
     const origDelimiter = FreeSurfer.setDelimiter('foo');
     const newDelimiter = FreeSurfer.setDelimiter(origDelimiter);
-    t.equals(newDelimiter, 'foo');
-    t.end();
+    st.equals(newDelimiter, 'foo');
+    st.end();
   });
 
-  t.test('should set a new defaultHeaderCount', (t) => {
+  t.test('should set a new defaultHeaderCount', (st) => {
     const origVal = FreeSurfer.setDefaultHeaderCount('foo');
     const newDefaultHeaderCount = FreeSurfer.setDefaultHeaderCount(origVal);
-    t.equals(newDefaultHeaderCount, 'foo');
-    t.end();
+    st.equals(newDefaultHeaderCount, 'foo');
+    st.end();
   });
 });
 
@@ -42,71 +42,71 @@ test('Parsing', (t) => {
     txtInvalid = fs.readFileSync(surfInvalid).toString();
   };
 
-  t.test('parses a valid string with header (tab delimited)', (t) => {
+  t.test('parses a valid string with header (tab delimited)', (st) => {
     before();
     const freeSurfer = new FreeSurfer({
       string: txtUnusedRoi,
       headerCount: 1,
     });
-    t.ok(freeSurfer instanceof FreeSurfer);
-    t.ok(freeSurfer.hasOwnProperty('header'));
-    t.end();
+    st.ok(freeSurfer instanceof FreeSurfer);
+    st.ok(freeSurfer.hasOwnProperty('header')); // eslint-disable-line no-prototype-builtins
+    st.end();
   });
 
-  t.test('parses a valid string with header (space delimited)', (t) => {
+  t.test('parses a valid string with header (space delimited)', (st) => {
     const freeSurfer = new FreeSurfer({
       string: txtSpaceDelim,
       headerCount: 1,
     });
-    t.ok(freeSurfer instanceof FreeSurfer);
-    t.ok(freeSurfer.hasOwnProperty('header'));
-    t.end();
+    st.ok(freeSurfer instanceof FreeSurfer);
+    st.ok(freeSurfer.hasOwnProperty('header')); // eslint-disable-line no-prototype-builtins
+    st.end();
   });
 
-  t.test('parses a valid string without header', (t) => {
+  t.test('parses a valid string without header', (st) => {
     const freeSurfer = new FreeSurfer({
       string: txtUnusedRoi.replace(/^[^\n]*\n/, ''),
       headerCount: 0,
     });
-    t.ok(freeSurfer instanceof FreeSurfer);
-    t.notOk(freeSurfer.hasOwnProperty('header'));
-    t.end();
+    st.ok(freeSurfer instanceof FreeSurfer);
+    st.notOk(freeSurfer.hasOwnProperty('header')); // eslint-disable-line no-prototype-builtins
+    st.end();
   });
 
-  t.test('rejects an invalid string (simple)', (t) => {
+  t.test('rejects an invalid string (simple)', (st) => {
     const tryFreeSurfer = () => new FreeSurfer({ string: 'invalid string' });
-    t.throws(tryFreeSurfer);
-    t.end();
+    st.throws(tryFreeSurfer);
+    st.end();
   });
 
-  t.test('rejects an invalid string (complex, ~FreeSurfer format)', (t) => {
+  t.test('rejects an invalid string (complex, ~FreeSurfer format)', (st) => {
     const tryFreeSurfer = () => new FreeSurfer({ string: txtInvalid });
-    t.throws(tryFreeSurfer);
-    t.end();
+    st.throws(tryFreeSurfer);
+    st.end();
   });
 
-  t.test('does not validate if validate option is false', (t) => {
+  t.test('does not validate if validate option is false', (st) => {
     const tryFreeSurfer = () => new FreeSurfer({ string: 'invalid string', validate: false });
-    t.doesNotThrow(tryFreeSurfer);
-    t.end();
+    st.doesNotThrow(tryFreeSurfer);
+    st.end();
   });
 
-  t.test('strips invalid fields by default', (t) => {
+  t.test('strips invalid fields by default', (st) => {
     const freeSurfer = new FreeSurfer({
       string: txtUnusedRoi,
       validate: false,
     });
-    t.equals(freeSurfer.stripMe, undefined);
-    t.end();
+    st.equals(freeSurfer.stripMe, undefined);
+    st.end();
   });
 
-  t.test('strips invalid fields by default', (t) => {
+  t.test('strips invalid fields by default', (st) => {
     const freeSurfer = new FreeSurfer({
       string: txtUnusedRoi,
       validate: false,
       removeInvalidFields: false,
     });
-    t.notEqual(freeSurfer.stripMe, undefined);
-    t.end();
+    st.notEqual(freeSurfer.stripMe, undefined);
+    st.end();
   });
 });
